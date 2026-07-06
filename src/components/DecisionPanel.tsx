@@ -1,12 +1,20 @@
 import { ArrowDown, ArrowRight, ArrowUp, Landmark, Play } from "lucide-react";
+import type { Dispatch, SetStateAction } from "react";
 import { lendingImpact, liquidityImpact, rateImpact } from "../game/policy";
-import type { LendingDecision, LiquidityDecision, PolicyDecision, RateDecision } from "../game/types";
+import type {
+  DepartmentResult,
+  LendingDecision,
+  LiquidityDecision,
+  PolicyDecision,
+  RateDecision,
+} from "../game/types";
 
 type DecisionPanelProps = {
   decision: PolicyDecision;
-  onChange: (decision: PolicyDecision) => void;
+  onChange: Dispatch<SetStateAction<PolicyDecision>>;
   onNextRound: () => void;
   canContinue: boolean;
+  departmentPreview: DepartmentResult[];
 };
 
 type Option<T extends string> = {
@@ -66,7 +74,13 @@ function SegmentedControl<T extends string>({
   );
 }
 
-export function DecisionPanel({ decision, onChange, onNextRound, canContinue }: DecisionPanelProps) {
+export function DecisionPanel({
+  decision,
+  onChange,
+  onNextRound,
+  canContinue,
+  departmentPreview,
+}: DecisionPanelProps) {
   const rate = rateImpact[decision.rate];
   const lending = lendingImpact[decision.lending];
   const liquidity = liquidityImpact[decision.liquidity];
@@ -85,19 +99,19 @@ export function DecisionPanel({ decision, onChange, onNextRound, canContinue }: 
         label="基准利率"
         value={decision.rate}
         options={rateOptions}
-        onSelect={(rateValue) => onChange({ ...decision, rate: rateValue })}
+        onSelect={(rateValue) => onChange((current) => ({ ...current, rate: rateValue }))}
       />
       <SegmentedControl
         label="银行放贷标准"
         value={decision.lending}
         options={lendingOptions}
-        onSelect={(lendingValue) => onChange({ ...decision, lending: lendingValue })}
+        onSelect={(lendingValue) => onChange((current) => ({ ...current, lending: lendingValue }))}
       />
       <SegmentedControl
         label="流动性"
         value={decision.liquidity}
         options={liquidityOptions}
-        onSelect={(liquidityValue) => onChange({ ...decision, liquidity: liquidityValue })}
+        onSelect={(liquidityValue) => onChange((current) => ({ ...current, liquidity: liquidityValue }))}
       />
 
       <div className="policy-preview">
@@ -115,6 +129,21 @@ export function DecisionPanel({ decision, onChange, onNextRound, canContinue }: 
           <ArrowUp size={16} aria-hidden="true" />
           <span>流动性影响</span>
           <strong>{liquidity.liquidity > 0 ? "+" : ""}{liquidity.liquidity}</strong>
+        </div>
+      </div>
+
+      <div className="decision-department-preview" aria-label="五部门预判">
+        <h3>{canContinue ? "下一轮五部门预判" : "最终五部门状态"}</h3>
+        <div className="decision-department-list">
+          {departmentPreview.map((department) => (
+            <div key={department.key} className={`decision-department-row status-${department.status}`}>
+              <div>
+                <strong>{department.name}</strong>
+                <span>{department.status}</span>
+              </div>
+              <p>{department.metrics.slice(0, 2).join(" / ")}</p>
+            </div>
+          ))}
         </div>
       </div>
 

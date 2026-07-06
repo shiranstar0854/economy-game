@@ -59,6 +59,23 @@ export function ResultPanel({ result }: ResultPanelProps) {
         ))}
       </div>
 
+      <div className="department-flow" aria-label="五部门传导结果">
+        {result.departments.map((department) => (
+          <article key={department.key} className={`department-flow-item status-${department.status}`}>
+            <div className="department-flow-head">
+              <h3>{department.name}</h3>
+              <span>{department.status}</span>
+            </div>
+            <div className="department-metrics">
+              {department.metrics.map((metric) => (
+                <small key={metric}>{metric}</small>
+              ))}
+            </div>
+            <p>{department.explanation}</p>
+          </article>
+        ))}
+      </div>
+
       <div className="summary-box">
         <h3>系统总结</h3>
         <p>{result.summary}</p>

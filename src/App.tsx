@@ -17,6 +17,10 @@ function App() {
 
   const canContinue = state.round < 10;
   const currentFocus = useMemo(() => learningConcepts[(state.round - 1) % learningConcepts.length], [state.round]);
+  const departmentPreview = useMemo(
+    () => (canContinue ? simulateRound(state, decision).result.departments : result.departments),
+    [canContinue, decision, result.departments, state],
+  );
 
   function handleNextRound() {
     if (!canContinue) return;
@@ -70,7 +74,13 @@ function App() {
 
       <div className="main-grid">
         <Dashboard state={state} />
-        <DecisionPanel decision={decision} onChange={setDecision} onNextRound={handleNextRound} canContinue={canContinue} />
+        <DecisionPanel
+          decision={decision}
+          onChange={setDecision}
+          onNextRound={handleNextRound}
+          canContinue={canContinue}
+          departmentPreview={departmentPreview}
+        />
         <ResultPanel result={result} />
       </div>
 

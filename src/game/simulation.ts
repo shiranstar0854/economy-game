@@ -1,5 +1,7 @@
 import { calculateBanking } from "./banking";
+import { buildDepartmentResults } from "./departments";
 import { calculateEconomy } from "./economy";
+import { calculateEnterprise } from "./enterprise";
 import { calculateMarket } from "./market";
 import { clamp, lendingImpact, liquidityImpact, rateImpact, round1, round2 } from "./policy";
 import type { EconomyState, HistoryPoint, PolicyDecision, RiskLevel, RoundResult } from "./types";
@@ -43,6 +45,7 @@ function buildResult(previous: EconomyState, next: EconomyState, decision: Polic
     consumption: `居民消费 ${describeDelta(consumptionDelta, "")}，信心指数为 ${next.confidence.toFixed(1)}。`,
     bankingRisk: `银行坏账率 ${describeDelta(badDebtDelta, " 个百分点")}，资本缓冲为 ${next.bankCapital.toFixed(1)}。`,
     market: `股票指数 ${describeDelta(stockDelta, " 点")}，债券收益率为 ${next.bondYield.toFixed(1)}%。`,
+    departments: buildDepartmentResults(previous, next, decision),
     summary:
       next.systemicRisk === "危机"
         ? "系统进入危机区间：坏账、通胀或失业压力已经形成明显传导。"
@@ -68,14 +71,10 @@ export function simulateRound(previous: EconomyState, decision: PolicyDecision):
   const baseRate = round2(clamp(previous.baseRate + rate.rateDelta, 1, 8));
   const creditGrowth = clamp(previous.creditGrowth + rate.credit + lending.credit - previous.badDebtRate * 0.08, -4, 15);
   const economy = calculateEconomy(previous, creditGrowth, liquidity.liquidity, rate.demand);
-
-  const corporateRevenue = clamp(previous.corporateRevenue + economy.gdpGrowth * 0.9 + creditGrowth * 0.42, 80, 190);
-  const corporateDebt = clamp(previous.corporateDebt + Math.max(0, creditGrowth) * 0.75 - baseRate * 0.12, 45, 140);
-  const corporateProfit = clamp(corporateRevenue * 0.105 - corporateDebt * 0.025 - baseRate * 0.35, -8, 26);
-  const corporateDefaultRisk = clamp(previous.corporateDefaultRisk + Math.max(0, -corporateProfit) * 0.4 + corporateDebt * 0.018 - economy.gdpGrowth * 0.18, 1, 18);
+  const enterprise = calculateEnterprise(previous, economy.gdpGrowth, creditGrowth, baseRate);
 
   const banking = calculateBanking(
-    { ...previous, corporateDefaultRisk: round1(corporateDefaultRisk) },
+    { ...previous, corporateDefaultRisk: enterprise.corporateDefaultRisk },
     creditGrowth,
     lending.badDebt,
     lending.capital,
@@ -91,10 +90,7 @@ export function simulateRound(previous: EconomyState, decision: PolicyDecision):
     baseRate,
     liquidity: round1(clamp(banking.liquidity + liquidity.liquidity, 10, 100)),
     creditGrowth: round1(creditGrowth),
-    corporateRevenue: round1(corporateRevenue),
-    corporateDebt: round1(corporateDebt),
-    corporateProfit: round1(corporateProfit),
-    corporateDefaultRisk: round1(corporateDefaultRisk),
+    ...enterprise,
     systemicRisk: "中",
   };
   const state = { ...nextDraft, systemicRisk: riskLevel(riskScore(nextDraft)) };

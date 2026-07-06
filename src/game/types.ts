@@ -9,6 +9,15 @@ export type PolicyDecision = {
 };
 
 export type RiskLevel = "低" | "中" | "高" | "危机";
+export type DepartmentKey = "household" | "enterprise" | "banking" | "market" | "policy";
+
+export type DepartmentResult = {
+  key: DepartmentKey;
+  name: string;
+  status: "扩张" | "收缩" | "稳定" | "承压";
+  metrics: string[];
+  explanation: string;
+};
 
 export type EconomyState = {
   round: number;
@@ -44,6 +53,7 @@ export type RoundResult = {
   consumption: string;
   bankingRisk: string;
   market: string;
+  departments: DepartmentResult[];
   summary: string;
   deltas: Partial<Record<keyof EconomyState, number>>;
 };

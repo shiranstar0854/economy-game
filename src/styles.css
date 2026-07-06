@@ -194,7 +194,7 @@ button {
   display: grid;
   grid-template-columns: minmax(280px, 0.95fr) minmax(340px, 1.1fr) minmax(300px, 1fr);
   gap: 18px;
-  align-items: stretch;
+  align-items: start;
 }
 
 .panel,
@@ -402,6 +402,62 @@ button {
   font-size: 17px;
 }
 
+.decision-department-preview {
+  margin: 0 0 20px;
+}
+
+.decision-department-preview h3 {
+  margin-bottom: 9px;
+  font-size: 15px;
+}
+
+.decision-department-list {
+  display: grid;
+  gap: 8px;
+}
+
+.decision-department-row {
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: #fff;
+}
+
+.decision-department-row div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.decision-department-row strong,
+.decision-department-row span,
+.decision-department-row p {
+  margin: 0;
+}
+
+.decision-department-row strong {
+  font-size: 13px;
+}
+
+.decision-department-row span {
+  border-radius: 6px;
+  padding: 2px 7px;
+  background: #eef1ed;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.decision-department-row p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .next-button {
   display: inline-flex;
   align-items: center;
@@ -452,6 +508,84 @@ button {
 .delta-strip strong {
   margin-top: 3px;
   font-size: 15px;
+}
+
+.department-flow {
+  display: grid;
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.department-flow-item {
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 11px 12px;
+  background: var(--surface-muted);
+}
+
+.department-flow-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.department-flow-head h3,
+.department-flow-item p {
+  margin: 0;
+}
+
+.department-flow-head h3 {
+  font-size: 14px;
+}
+
+.department-flow-head span {
+  border-radius: 6px;
+  padding: 3px 7px;
+  background: #eef1ed;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.department-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.department-metrics small {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px 6px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.department-flow-item p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.52;
+}
+
+.status-扩张 {
+  border-left-color: var(--green);
+}
+
+.status-收缩 {
+  border-left-color: #69746e;
+}
+
+.status-稳定 {
+  border-left-color: var(--amber);
+}
+
+.status-承压 {
+  border-left-color: var(--red);
 }
 
 .result-item {
