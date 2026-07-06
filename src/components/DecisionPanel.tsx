@@ -6,6 +6,7 @@ type DecisionPanelProps = {
   decision: PolicyDecision;
   onChange: (decision: PolicyDecision) => void;
   onNextRound: () => void;
+  canContinue: boolean;
 };
 
 type Option<T extends string> = {
@@ -65,7 +66,7 @@ function SegmentedControl<T extends string>({
   );
 }
 
-export function DecisionPanel({ decision, onChange, onNextRound }: DecisionPanelProps) {
+export function DecisionPanel({ decision, onChange, onNextRound, canContinue }: DecisionPanelProps) {
   const rate = rateImpact[decision.rate];
   const lending = lendingImpact[decision.lending];
   const liquidity = liquidityImpact[decision.liquidity];
@@ -117,9 +118,9 @@ export function DecisionPanel({ decision, onChange, onNextRound }: DecisionPanel
         </div>
       </div>
 
-      <button className="next-button" type="button" onClick={onNextRound}>
+      <button className="next-button" type="button" onClick={onNextRound} disabled={!canContinue}>
         <Play size={18} fill="currentColor" aria-hidden="true" />
-        下一轮
+        {canContinue ? "下一轮" : "模拟结束"}
       </button>
     </section>
   );

@@ -5,7 +5,7 @@ import { Dashboard } from "./components/Dashboard";
 import { DecisionPanel } from "./components/DecisionPanel";
 import { ResultPanel } from "./components/ResultPanel";
 import { initialDecision, initialHistory, initialResult, initialState } from "./data/initialState";
-import { learningConcepts } from "./data/events";
+import { learningConcepts, sandboxDepartments } from "./data/events";
 import { simulateRound, toHistoryPoint } from "./game/simulation";
 import type { EconomyState, HistoryPoint, PolicyDecision, RoundResult } from "./game/types";
 
@@ -44,6 +44,10 @@ function App() {
           </div>
         </div>
         <div className="topbar-actions">
+          <div className="round-counter">
+            <span>当前回合</span>
+            <strong>{state.round} / 10</strong>
+          </div>
           <div className="focus-line">
             <span>本轮观察</span>
             <strong>{currentFocus}</strong>
@@ -55,9 +59,18 @@ function App() {
         </div>
       </header>
 
+      <section className="department-strip" aria-label="沙盘部门">
+        {sandboxDepartments.map((department) => (
+          <article key={department.name}>
+            <h2>{department.name}</h2>
+            <p>{department.summary}</p>
+          </article>
+        ))}
+      </section>
+
       <div className="main-grid">
         <Dashboard state={state} />
-        <DecisionPanel decision={decision} onChange={setDecision} onNextRound={handleNextRound} />
+        <DecisionPanel decision={decision} onChange={setDecision} onNextRound={handleNextRound} canContinue={canContinue} />
         <ResultPanel result={result} />
       </div>
 

@@ -12,6 +12,21 @@ const items = [
   { key: "market", label: "市场价格变化", icon: LineChart },
 ] as const;
 
+const deltaItems: Array<{ key: keyof RoundResult["deltas"]; label: string; unit: string }> = [
+  { key: "gdpGrowth", label: "GDP", unit: "pct" },
+  { key: "inflation", label: "通胀", unit: "pct" },
+  { key: "unemployment", label: "失业", unit: "pct" },
+  { key: "badDebtRate", label: "坏账", unit: "pct" },
+  { key: "stockIndex", label: "股票", unit: "点" },
+];
+
+function formatDelta(value: number | undefined, unit: string) {
+  if (value === undefined) return "0";
+  const sign = value > 0 ? "+" : "";
+  if (unit === "pct") return `${sign}${value.toFixed(1)}pct`;
+  return `${sign}${Math.round(value)}${unit}`;
+}
+
 export function ResultPanel({ result }: ResultPanelProps) {
   return (
     <section className="panel result-panel" aria-labelledby="result-title">
@@ -32,6 +47,15 @@ export function ResultPanel({ result }: ResultPanelProps) {
               <p>{result[key]}</p>
             </div>
           </article>
+        ))}
+      </div>
+
+      <div className="delta-strip" aria-label="关键指标增减值">
+        {deltaItems.map((item) => (
+          <div key={item.key}>
+            <span>{item.label}</span>
+            <strong>{formatDelta(result.deltas[item.key], item.unit)}</strong>
+          </div>
         ))}
       </div>
 

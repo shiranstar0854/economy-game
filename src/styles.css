@@ -108,24 +108,67 @@ button {
   color: var(--muted);
 }
 
+.round-counter,
 .focus-line {
   min-width: 220px;
   border-left: 3px solid var(--green);
   padding: 6px 0 6px 12px;
 }
 
+.round-counter {
+  min-width: 92px;
+  border-left-color: var(--amber);
+}
+
+.round-counter span,
+.round-counter strong,
 .focus-line span,
 .focus-line strong {
   display: block;
 }
 
+.round-counter span,
 .focus-line span {
   font-size: 12px;
+  color: var(--muted);
 }
 
+.round-counter strong,
 .focus-line strong {
   margin-top: 2px;
   font-size: 14px;
+}
+
+.department-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.department-strip article {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.department-strip h2,
+.department-strip p {
+  margin: 0;
+}
+
+.department-strip h2 {
+  margin-bottom: 5px;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.department-strip p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .ghost-button,
@@ -371,9 +414,44 @@ button {
   font-weight: 800;
 }
 
+.next-button:disabled {
+  cursor: not-allowed;
+  background: #8b958f;
+  color: #eef1ed;
+}
+
 .result-list {
   display: grid;
   gap: 12px;
+}
+
+.delta-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.delta-strip div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 8px;
+  background: var(--surface-muted);
+}
+
+.delta-strip span,
+.delta-strip strong {
+  display: block;
+}
+
+.delta-strip span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.delta-strip strong {
+  margin-top: 3px;
+  font-size: 15px;
 }
 
 .result-item {
@@ -485,8 +563,13 @@ button {
 
   .main-grid,
   .chart-grid,
-  .policy-preview {
+  .policy-preview,
+  .department-strip {
     grid-template-columns: 1fr;
+  }
+
+  .delta-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .panel-heading,
