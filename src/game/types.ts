@@ -1,69 +1,107 @@
-export type RateDecision = "cut" | "hold" | "raise";
-export type LendingDecision = "loose" | "normal" | "strict";
-export type LiquidityDecision = "inject" | "hold" | "tighten";
+export type VariableKey =
+  | "residentIncome"
+  | "consumptionIntent"
+  | "savingsTendency"
+  | "enterpriseOrders"
+  | "enterpriseProfit"
+  | "investmentIntent"
+  | "employmentLevel"
+  | "creditExpansion"
+  | "debtPressure"
+  | "badDebtRisk"
+  | "housePriceIndex"
+  | "localFinance"
+  | "externalDemand"
+  | "residentExpectation"
+  | "longTermEfficiency";
+
+export type MetricKey =
+  | "growth"
+  | "employment"
+  | "inflationPressure"
+  | "debtPressure"
+  | "badDebtRisk"
+  | "stabilityIndex";
+
+export type EconomyStatus = "健康扩张" | "需求不足" | "经济过热" | "债务驱动" | "金融收缩" | "滞胀";
+
+export type PolicyKey =
+  | "rateCut"
+  | "rateRaise"
+  | "fiscalSpending"
+  | "householdSubsidy"
+  | "corporateTaxCut"
+  | "creditRegulation"
+  | "realEstateSupport"
+  | "industrialUpgrade";
+
+export type EventKey = "realEstateDownturn" | "exportBoost" | "exportDrop" | "financialRisk" | "techBreakthrough";
+
+export type ScoreMap<T extends string> = Record<T, number>;
+export type EconomyVariables = ScoreMap<VariableKey>;
+export type EconomyMetrics = ScoreMap<MetricKey>;
 
 export type PolicyDecision = {
-  rate: RateDecision;
-  lending: LendingDecision;
-  liquidity: LiquidityDecision;
+  selectedPolicies: PolicyKey[];
 };
 
-export type RiskLevel = "低" | "中" | "高" | "危机";
-export type DepartmentKey = "household" | "enterprise" | "banking" | "market" | "policy";
+export type PolicyDefinition = {
+  key: PolicyKey;
+  label: string;
+  category: "货币" | "财政" | "监管" | "结构";
+  description: string;
+  variableEffects: Partial<Record<VariableKey, number>>;
+  metricEffects?: Partial<Record<MetricKey, number>>;
+  suitable: string[];
+  risks: string[];
+  sideEffects: string[];
+};
 
-export type DepartmentResult = {
-  key: DepartmentKey;
-  name: string;
-  status: "扩张" | "收缩" | "稳定" | "承压";
-  metrics: string[];
-  explanation: string;
+export type EventDefinition = {
+  key: EventKey;
+  label: string;
+  description: string;
+  transmission: string[];
+  variableEffects: Partial<Record<VariableKey, number>>;
+  metricEffects?: Partial<Record<MetricKey, number>>;
+};
+
+export type StatusInfo = {
+  status: EconomyStatus;
+  mainContradiction: string;
+  reason: string;
+  suggestion: string;
 };
 
 export type EconomyState = {
   round: number;
-  baseRate: number;
-  gdpGrowth: number;
-  inflation: number;
-  unemployment: number;
-  householdIncome: number;
-  householdConsumption: number;
-  householdSavings: number;
-  householdDebt: number;
-  confidence: number;
-  corporateRevenue: number;
-  corporateDebt: number;
-  corporateProfit: number;
-  corporateDefaultRisk: number;
-  deposits: number;
-  loans: number;
-  bankCapital: number;
-  badDebtRate: number;
-  liquidity: number;
-  stockIndex: number;
-  bondYield: number;
-  riskAppetite: number;
-  volatility: number;
-  creditGrowth: number;
-  systemicRisk: RiskLevel;
+  quarterLabel: string;
+  variables: EconomyVariables;
+  metrics: EconomyMetrics;
+  status: EconomyStatus;
+  mainContradiction: string;
+  lastEvent: EventDefinition | null;
 };
 
 export type RoundResult = {
   title: string;
-  financing: string;
-  consumption: string;
-  bankingRisk: string;
-  market: string;
-  departments: DepartmentResult[];
-  summary: string;
-  deltas: Partial<Record<keyof EconomyState, number>>;
+  selectedPolicies: PolicyKey[];
+  event: EventDefinition | null;
+  variableDeltas: Partial<Record<VariableKey, number>>;
+  metricDeltas: Partial<Record<MetricKey, number>>;
+  sideEffects: string[];
+  feedback: string[];
+  statusReason: string;
 };
 
 export type HistoryPoint = {
   round: number;
-  gdpGrowth: number;
-  inflation: number;
-  unemployment: number;
-  badDebtRate: number;
-  stockIndex: number;
-  systemicRisk: RiskLevel;
+  quarterLabel: string;
+  status: EconomyStatus;
+  growth: number;
+  employment: number;
+  inflationPressure: number;
+  debtPressure: number;
+  badDebtRisk: number;
+  stabilityIndex: number;
 };

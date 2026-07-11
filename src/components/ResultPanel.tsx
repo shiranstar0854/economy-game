@@ -1,84 +1,124 @@
-import { Building2, CircleDollarSign, Landmark, LineChart, ScrollText } from "lucide-react";
-import type { RoundResult } from "../game/types";
+import { AlertTriangle, ArrowRightLeft, CalendarClock, ReceiptText, ScrollText } from "lucide-react";
+import { metricLabels, policyDefinitions, variableLabels } from "../game/policy";
+import type { MetricKey, RoundResult, VariableKey } from "../game/types";
 
 type ResultPanelProps = {
   result: RoundResult;
 };
 
-const items = [
-  { key: "financing", label: "企业融资变化", icon: Building2 },
-  { key: "consumption", label: "居民消费变化", icon: CircleDollarSign },
-  { key: "bankingRisk", label: "银行风险变化", icon: Landmark },
-  { key: "market", label: "市场价格变化", icon: LineChart },
-] as const;
-
-const deltaItems: Array<{ key: keyof RoundResult["deltas"]; label: string; unit: string }> = [
-  { key: "gdpGrowth", label: "GDP", unit: "pct" },
-  { key: "inflation", label: "通胀", unit: "pct" },
-  { key: "unemployment", label: "失业", unit: "pct" },
-  { key: "badDebtRate", label: "坏账", unit: "pct" },
-  { key: "stockIndex", label: "股票", unit: "点" },
-];
-
-function formatDelta(value: number | undefined, unit: string) {
+function formatDelta(value: number | undefined) {
   if (value === undefined) return "0";
-  const sign = value > 0 ? "+" : "";
-  if (unit === "pct") return `${sign}${value.toFixed(1)}pct`;
-  return `${sign}${Math.round(value)}${unit}`;
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)}`;
+}
+
+function topDeltas<T extends string>(deltas: Partial<Record<T, number>>, limit = 8) {
+  return Object.entries(deltas)
+    .filter(([, value]) => typeof value === "number" && value !== 0)
+    .sort((a, b) => Math.abs(b[1] as number) - Math.abs(a[1] as number))
+    .slice(0, limit) as Array<[T, number]>;
 }
 
 export function ResultPanel({ result }: ResultPanelProps) {
+  const selectedPolicies = result.selectedPolicies.map((key) => policyDefinitions[key]);
+  const variableDeltas = topDeltas<VariableKey>(result.variableDeltas);
+  const metricDeltas = topDeltas<MetricKey>(result.metricDeltas, 6);
+
   return (
     <section className="panel result-panel" aria-labelledby="result-title">
       <div className="panel-heading">
         <div>
-          <h2 id="result-title">本轮结果</h2>
+          <h2 id="result-title">系统反馈</h2>
           <p>{result.title}</p>
         </div>
         <ScrollText size={22} aria-hidden="true" />
       </div>
 
-      <div className="result-list">
-        {items.map(({ key, label, icon: Icon }) => (
-          <article key={key} className="result-item">
-            <Icon size={18} aria-hidden="true" />
-            <div>
-              <h3>{label}</h3>
-              <p>{result[key]}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-
-      <div className="delta-strip" aria-label="关键指标增减值">
-        {deltaItems.map((item) => (
-          <div key={item.key}>
-            <span>{item.label}</span>
-            <strong>{formatDelta(result.deltas[item.key], item.unit)}</strong>
+      <div className="result-block">
+        <div className="result-block-title">
+          <ReceiptText size={18} aria-hidden="true" />
+          <h3>本轮政策</h3>
+        </div>
+        {selectedPolicies.length > 0 ? (
+          <div className="policy-chip-list">
+            {selectedPolicies.map((policy) => (
+              <span key={policy.key}>{policy.label}</span>
+            ))}
           </div>
-        ))}
+        ) : (
+          <p className="muted-copy">尚未推进回合。请选择 2-3 个政策。</p>
+        )}
       </div>
 
-      <div className="department-flow" aria-label="五部门传导结果">
-        {result.departments.map((department) => (
-          <article key={department.key} className={`department-flow-item status-${department.status}`}>
-            <div className="department-flow-head">
-              <h3>{department.name}</h3>
-              <span>{department.status}</span>
+      {result.event && (
+        <div className="event-box">
+          <div className="result-block-title">
+            <CalendarClock size={18} aria-hidden="true" />
+            <h3>{result.event.label}</h3>
+          </div>
+          <p>{result.event.description}</p>
+          <small>{result.event.transmission.join(" → ")}</small>
+        </div>
+      )}
+
+      <div className="delta-strip" aria-label="结果指标增减值">
+        {metricDeltas.length > 0 ? (
+          metricDeltas.map(([key, value]) => (
+            <div key={key}>
+              <span>{metricLabels[key]}</span>
+              <strong>{formatDelta(value)}</strong>
             </div>
-            <div className="department-metrics">
-              {department.metrics.map((metric) => (
-                <small key={metric}>{metric}</small>
-              ))}
-            </div>
-            <p>{department.explanation}</p>
-          </article>
-        ))}
+          ))
+        ) : (
+          <div>
+            <span>结果指标</span>
+            <strong>等待选择</strong>
+          </div>
+        )}
+      </div>
+
+      <div className="result-block">
+        <div className="result-block-title">
+          <ArrowRightLeft size={18} aria-hidden="true" />
+          <h3>变量传导</h3>
+        </div>
+        <div className="variable-delta-grid">
+          {variableDeltas.length > 0 ? (
+            variableDeltas.map(([key, value]) => (
+              <div key={key}>
+                <span>{variableLabels[key]}</span>
+                <strong>{formatDelta(value)}</strong>
+              </div>
+            ))
+          ) : (
+            <p className="muted-copy">推进下一季度后显示变量变化。</p>
+          )}
+        </div>
+      </div>
+
+      <div className="result-block">
+        <div className="result-block-title">
+          <AlertTriangle size={18} aria-hidden="true" />
+          <h3>副作用</h3>
+        </div>
+        {result.sideEffects.length > 0 ? (
+          <ul className="side-effect-list">
+            {result.sideEffects.map((effect) => (
+              <li key={effect}>{effect}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="muted-copy">当前没有新的政策副作用。</p>
+        )}
       </div>
 
       <div className="summary-box">
-        <h3>系统总结</h3>
-        <p>{result.summary}</p>
+        <h3>反馈修正</h3>
+        <p>{result.statusReason}</p>
+        <ul>
+          {result.feedback.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
       </div>
     </section>
   );
