@@ -38,6 +38,19 @@ export const initialResult: RoundResult = {
     "请选择 2-3 个政策进入下一季度。",
   ],
   statusReason: "初始状态接近平衡，可用于观察不同政策路径如何传导。",
+  crisis: {
+    previousPhase: initialState.crisisPhase,
+    phase: initialState.crisisPhase,
+    systemicRiskDelta: 0,
+    playerMove: "等待玩家落子",
+    strongestThreat: initialState.currentThreat,
+    nextThreat: initialState.nextThreat,
+    warningRoundsLeft: initialState.warningRoundsLeft,
+    checkResolved: false,
+    collapseReason: null,
+    collapseChain: [],
+    opponentMoves: [],
+  },
 };
 
 export const initialHistory = [toHistoryPoint(initialState)];

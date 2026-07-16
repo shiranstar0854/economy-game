@@ -983,6 +983,113 @@ button {
   margin-top: 10px;
 }
 
+.crisis-overview,
+.crisis-warning,
+.crisis-settlement {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-muted);
+}
+
+.crisis-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+  padding: 12px;
+}
+
+.crisis-overview span,
+.crisis-warning span,
+.crisis-settlement span,
+.crisis-settlement small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.crisis-overview strong,
+.crisis-warning strong,
+.crisis-settlement strong {
+  display: block;
+  margin-top: 3px;
+}
+
+.crisis-overview p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.crisis-warning {
+  display: grid;
+  gap: 5px;
+  margin: 14px 0;
+  padding: 12px;
+}
+
+.crisis-warning p,
+.crisis-warning small,
+.crisis-settlement p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.crisis-settlement {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px;
+}
+
+.crisis-settlement-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.crisis-settlement-grid > div {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px;
+  background: var(--surface);
+  font-size: 13px;
+}
+
+.opponent-move-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.collapse-chain {
+  display: grid;
+  gap: 6px;
+  border-left: 3px solid var(--red);
+  padding-left: 10px;
+  color: #7d2e25;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.phase-warning {
+  border-color: #d7a144;
+  background: var(--amber-soft);
+}
+
+.phase-liquidity,
+.phase-cascade,
+.phase-collapsed {
+  border-color: #cc6e5c;
+  background: var(--red-soft);
+}
+
 @media (max-width: 1050px) {
   .policy-card-grid {
     grid-template-columns: 1fr;
@@ -995,6 +1102,11 @@ button {
   }
 
   .variable-delta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .crisis-overview,
+  .crisis-settlement-grid {
     grid-template-columns: 1fr;
   }
 

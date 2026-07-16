@@ -2,6 +2,7 @@ import type {
   EconomyMetrics,
   EconomyStatus,
   EconomyVariables,
+  CrisisPhase,
   EventDefinition,
   MetricKey,
   PolicyDefinition,
@@ -13,6 +14,14 @@ import type {
 export const MAX_ROUNDS = 12;
 export const MIN_POLICIES = 2;
 export const MAX_POLICIES = 3;
+
+export const crisisPhaseLabels: Record<CrisisPhase, string> = {
+  normal: "正常",
+  warning: "预警",
+  liquidity: "流动性紧张",
+  cascade: "连锁抛售",
+  collapsed: "崩盘",
+};
 
 export const variableLabels: Record<VariableKey, string> = {
   residentIncome: "居民收入",

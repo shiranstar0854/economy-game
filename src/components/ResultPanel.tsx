@@ -1,5 +1,5 @@
 import { AlertTriangle, ArrowRightLeft, CalendarClock, ReceiptText, ScrollText } from "lucide-react";
-import { metricLabels, policyDefinitions, variableLabels } from "../game/policy";
+import { crisisPhaseLabels, metricLabels, policyDefinitions, variableLabels } from "../game/policy";
 import type { MetricKey, RoundResult, VariableKey } from "../game/types";
 
 type ResultPanelProps = {
@@ -46,6 +46,34 @@ export function ResultPanel({ result }: ResultPanelProps) {
           </div>
         ) : (
           <p className="muted-copy">尚未推进回合。请选择 2-3 个政策。</p>
+        )}
+      </div>
+
+      <div className={`crisis-settlement phase-${result.crisis.phase}`}>
+        <div className="result-block-title">
+          <AlertTriangle size={18} aria-hidden="true" />
+          <h3>对弈结算</h3>
+        </div>
+        <div className="crisis-settlement-grid">
+          <div><span>玩家落子</span><strong>{result.crisis.playerMove}</strong></div>
+          <div><span>危机等级</span><strong>{crisisPhaseLabels[result.crisis.previousPhase]} → {crisisPhaseLabels[result.crisis.phase]}</strong></div>
+          <div><span>风险变化</span><strong>{formatDelta(result.crisis.systemicRiskDelta)}</strong></div>
+          <div><span>止损回合</span><strong>{result.crisis.warningRoundsLeft ?? "无"}</strong></div>
+        </div>
+        <p>{result.crisis.checkResolved ? "本轮已解除将军。" : result.crisis.strongestThreat ? `系统反制：${result.crisis.strongestThreat}` : "本轮未形成强制反制。"}</p>
+        {result.crisis.nextThreat && <small>{result.crisis.nextThreat}</small>}
+        {result.crisis.opponentMoves.length > 0 && (
+          <ul className="opponent-move-list">
+            {result.crisis.opponentMoves.map((move) => (
+              <li key={`${move.actor}-${move.label}`}><strong>{move.label}</strong>：{move.transmission.join(" → ")}</li>
+            ))}
+          </ul>
+        )}
+        {result.crisis.collapseReason && (
+          <div className="collapse-chain">
+            <strong>终局原因：{result.crisis.collapseReason}</strong>
+            <span>{result.crisis.collapseChain.join(" → ")}</span>
+          </div>
         )}
       </div>
 

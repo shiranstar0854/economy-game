@@ -1,5 +1,5 @@
 import { Activity, BarChart3, BriefcaseBusiness, CircleGauge, ShieldAlert, TrendingUp } from "lucide-react";
-import { metricLabels, statusInfo, variableLabels } from "../game/policy";
+import { crisisPhaseLabels, metricLabels, statusInfo, variableLabels } from "../game/policy";
 import type { EconomyState, MetricKey, VariableKey } from "../game/types";
 import { MetricCard } from "./MetricCard";
 
@@ -60,6 +60,18 @@ export function Dashboard({ state }: DashboardProps) {
           <strong>{state.mainContradiction}</strong>
         </div>
         <p>{info.reason}</p>
+      </div>
+
+      <div className={`crisis-overview phase-${state.crisisPhase}`}>
+        <div>
+          <span>系统性风险</span>
+          <strong>{state.systemicRisk.toFixed(1)} / 100</strong>
+        </div>
+        <div>
+          <span>危机阶段</span>
+          <strong>{crisisPhaseLabels[state.crisisPhase]}</strong>
+        </div>
+        <p>{state.currentThreat ?? "系统尚未形成明确反制。"}</p>
       </div>
 
       <div className="metric-grid">

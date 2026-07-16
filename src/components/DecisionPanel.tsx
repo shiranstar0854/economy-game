@@ -1,9 +1,10 @@
 import { Check, Landmark, Play } from "lucide-react";
 import { MAX_POLICIES, MIN_POLICIES, metricLabels, policyDefinitions, variableLabels } from "../game/policy";
-import type { PolicyDecision, PolicyKey } from "../game/types";
+import type { EconomyState, PolicyDecision, PolicyKey } from "../game/types";
 
 type DecisionPanelProps = {
   decision: PolicyDecision;
+  state: EconomyState;
   onTogglePolicy: (policy: PolicyKey) => void;
   onNextRound: () => void;
   canContinue: boolean;
@@ -20,7 +21,7 @@ function effectText(policy: PolicyKey) {
   return strongEffects.map(([key]) => variableLabels[key as keyof typeof variableLabels] ?? metricLabels[key as keyof typeof metricLabels]).join(" / ");
 }
 
-export function DecisionPanel({ decision, onTogglePolicy, onNextRound, canContinue, validSelection }: DecisionPanelProps) {
+export function DecisionPanel({ decision, state, onTogglePolicy, onNextRound, canContinue, validSelection }: DecisionPanelProps) {
   const selected = decision.selectedPolicies;
   const selectionText =
     selected.length < MIN_POLICIES
@@ -42,6 +43,16 @@ export function DecisionPanel({ decision, onTogglePolicy, onNextRound, canContin
       <div className="selection-rule" data-valid={validSelection}>
         <strong>{selectionText}</strong>
         <span>选择过多会放大副作用，选择过少无法推进。</span>
+      </div>
+
+      <div className={`crisis-warning phase-${state.crisisPhase}`}>
+        <span>当前威胁</span>
+        <strong>{state.currentThreat ?? "尚无将军，注意控制信用与资产泡沫。"}</strong>
+        <p>
+          系统性风险 {state.systemicRisk.toFixed(1)} / 100
+          {state.warningRoundsLeft !== null ? `，剩余止损回合：${state.warningRoundsLeft}` : ""}
+        </p>
+        {state.nextThreat && <small>{state.nextThreat}</small>}
       </div>
 
       <div className="policy-card-grid">
@@ -77,7 +88,7 @@ export function DecisionPanel({ decision, onTogglePolicy, onNextRound, canContin
 
       <button className="next-button" type="button" onClick={onNextRound} disabled={!canContinue || !validSelection}>
         <Play size={18} fill="currentColor" aria-hidden="true" />
-        {canContinue ? "进入下一季度" : "模拟结束"}
+        {canContinue ? "落子并进入下一季度" : state.crisisPhase === "collapsed" ? "系统崩盘" : "模拟结束"}
       </button>
     </section>
   );

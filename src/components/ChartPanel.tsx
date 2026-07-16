@@ -32,7 +32,7 @@ export function ChartPanel({ history }: ChartPanelProps) {
         </div>
 
         <div className="chart-card">
-          <h3>通胀、债务与坏账</h3>
+          <h3>通胀、债务、坏账与系统性风险</h3>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={history} margin={{ top: 12, right: 18, left: -12, bottom: 0 }}>
               <CartesianGrid stroke="#d9ded6" strokeDasharray="3 3" />
@@ -42,6 +42,7 @@ export function ChartPanel({ history }: ChartPanelProps) {
               <Line type="monotone" dataKey="inflationPressure" name="通胀压力" stroke="#c57a18" strokeWidth={2.5} dot={false} />
               <Line type="monotone" dataKey="debtPressure" name="债务压力" stroke="#d16b36" strokeWidth={2.5} dot={false} />
               <Line type="monotone" dataKey="badDebtRisk" name="坏账风险" stroke="#9f3c2f" strokeWidth={2.5} dot={false} />
+              <Line type="monotone" dataKey="systemicRisk" name="系统性风险" stroke="#4e3c8a" strokeWidth={2.5} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>

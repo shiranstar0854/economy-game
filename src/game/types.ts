@@ -37,6 +37,15 @@ export type PolicyKey =
 
 export type EventKey = "realEstateDownturn" | "exportBoost" | "exportDrop" | "financialRisk" | "techBreakthrough";
 
+export type CrisisPhase = "normal" | "warning" | "liquidity" | "cascade" | "collapsed";
+
+export type OpponentMove = {
+  actor: "bank" | "household" | "enterprise" | "market" | "localFinance";
+  label: string;
+  severity: "watch" | "pressure" | "critical";
+  transmission: string[];
+};
+
 export type ScoreMap<T extends string> = Record<T, number>;
 export type EconomyVariables = ScoreMap<VariableKey>;
 export type EconomyMetrics = ScoreMap<MetricKey>;
@@ -81,6 +90,29 @@ export type EconomyState = {
   status: EconomyStatus;
   mainContradiction: string;
   lastEvent: EventDefinition | null;
+  systemicRisk: number;
+  crisisPhase: CrisisPhase;
+  currentThreat: string | null;
+  nextThreat: string | null;
+  opponentMoves: OpponentMove[];
+  warningRoundsLeft: number | null;
+  cascadeRounds: number;
+  collapseReason: string | null;
+  collapseChain: string[];
+};
+
+export type CrisisSettlement = {
+  previousPhase: CrisisPhase;
+  phase: CrisisPhase;
+  systemicRiskDelta: number;
+  playerMove: string;
+  strongestThreat: string | null;
+  nextThreat: string | null;
+  warningRoundsLeft: number | null;
+  checkResolved: boolean;
+  collapseReason: string | null;
+  collapseChain: string[];
+  opponentMoves: OpponentMove[];
 };
 
 export type RoundResult = {
@@ -92,6 +124,7 @@ export type RoundResult = {
   sideEffects: string[];
   feedback: string[];
   statusReason: string;
+  crisis: CrisisSettlement;
 };
 
 export type HistoryPoint = {
@@ -104,4 +137,6 @@ export type HistoryPoint = {
   debtPressure: number;
   badDebtRisk: number;
   stabilityIndex: number;
+  systemicRisk: number;
+  crisisPhase: CrisisPhase;
 };

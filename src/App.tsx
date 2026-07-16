@@ -16,7 +16,7 @@ function App() {
   const [result, setResult] = useState<RoundResult>(initialResult);
   const [history, setHistory] = useState<HistoryPoint[]>(initialHistory);
 
-  const canContinue = state.round < MAX_ROUNDS;
+  const canContinue = state.round < MAX_ROUNDS && state.crisisPhase !== "collapsed";
   const currentFocus = useMemo(() => learningConcepts[(state.round - 1) % learningConcepts.length], [state.round]);
   const selectedCount = decision.selectedPolicies.length;
   const validSelection = selectedCount >= 2 && selectedCount <= MAX_POLICIES;
@@ -86,6 +86,7 @@ function App() {
         <Dashboard state={state} />
         <DecisionPanel
           decision={decision}
+          state={state}
           onTogglePolicy={togglePolicy}
           onNextRound={handleNextRound}
           canContinue={canContinue}
@@ -96,7 +97,9 @@ function App() {
 
       {!canContinue && (
         <div className="end-banner" role="status">
-          已完成 12 个季度模拟。可以重置后尝试另一组政策路径。
+          {state.crisisPhase === "collapsed"
+            ? `系统崩盘：${state.collapseReason ?? "风险传导失控"}。请重置后复盘最后的传导链。`
+            : "已完成 12 个季度模拟。可以重置后尝试另一组政策路径。"}
         </div>
       )}
 
